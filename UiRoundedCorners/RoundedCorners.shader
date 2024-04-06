@@ -76,7 +76,8 @@ Shader "UI/RoundedCorners/RoundedCorners" {
                     return color;
                 }
 
-                float alpha = CalcAlpha(uv, _WidthHeightRadius.xy, _WidthHeightRadius.z);
+                //计算alpha不需要tilling、offset
+                float alpha = CalcAlpha(i.uv, _WidthHeightRadius.xy, _WidthHeightRadius.z);
 
                 #ifdef UNITY_UI_ALPHACLIP
                 clip(alpha - 0.001);

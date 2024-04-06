@@ -59,11 +59,14 @@
             float4 _halfSize;
             float4 _rect2props;
             sampler2D _MainTex;
+            float4 _MainTex_ST;
             float4 _ClipRect;
             fixed4 _TextureSampleAdd;
 
             fixed4 frag (v2f i) : SV_Target {
-                half4 color = (tex2D(_MainTex, i.uv) + _TextureSampleAdd) * i.color;
+                // 应用Tiling和Offset
+                float2 uv = i.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+                half4 color = (tex2D(_MainTex, uv) + _TextureSampleAdd) * i.color;
 
                 #ifdef UNITY_UI_CLIP_RECT
                 color.a *= UnityGet2DClipping(i.worldPosition.xy, _ClipRect);
@@ -77,13 +80,14 @@
                     return color;
                 }
 
+                //计算alpha不需要tilling、offset
                 float alpha = CalcAlphaForIndependentCorners(i.uv, _halfSize.xy, _rect2props, _r);
 
                 #ifdef UNITY_UI_ALPHACLIP
                 clip(alpha - 0.001);
                 #endif
                 
-                return mixAlpha(tex2D(_MainTex, i.uv), i.color, alpha);
+                return mixAlpha(tex2D(_MainTex, uv), i.color, alpha);
             }
             
             ENDCG
