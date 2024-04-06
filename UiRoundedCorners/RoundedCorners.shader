@@ -55,10 +55,13 @@ Shader "UI/RoundedCorners/RoundedCorners" {
 
             float4 _WidthHeightRadius;
             sampler2D _MainTex;
+            float4 _MainTex_ST;
             fixed4 _TextureSampleAdd;
             float4 _ClipRect;
 
             fixed4 frag (v2f i) : SV_Target {
+                // 应用Tiling和Offset
+                float2 uv = i.uv * _MainTex_ST.xy + _MainTex_ST.zw;
                 half4 color = (tex2D(_MainTex, i.uv) + _TextureSampleAdd) * i.color;
 
                 #ifdef UNITY_UI_CLIP_RECT
