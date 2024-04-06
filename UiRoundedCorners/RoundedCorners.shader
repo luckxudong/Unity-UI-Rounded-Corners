@@ -62,7 +62,7 @@ Shader "UI/RoundedCorners/RoundedCorners" {
             fixed4 frag (v2f i) : SV_Target {
                 // 应用Tiling和Offset
                 float2 uv = i.uv * _MainTex_ST.xy + _MainTex_ST.zw;
-                half4 color = (tex2D(_MainTex, i.uv) + _TextureSampleAdd) * i.color;
+                half4 color = (tex2D(_MainTex, uv) + _TextureSampleAdd) * i.color;
 
                 #ifdef UNITY_UI_CLIP_RECT
                 color.a *= UnityGet2DClipping(i.worldPosition.xy, _ClipRect);
@@ -76,13 +76,13 @@ Shader "UI/RoundedCorners/RoundedCorners" {
                     return color;
                 }
 
-                float alpha = CalcAlpha(i.uv, _WidthHeightRadius.xy, _WidthHeightRadius.z);
+                float alpha = CalcAlpha(uv, _WidthHeightRadius.xy, _WidthHeightRadius.z);
 
                 #ifdef UNITY_UI_ALPHACLIP
                 clip(alpha - 0.001);
                 #endif
                 
-                return mixAlpha(tex2D(_MainTex, i.uv), i.color, alpha);
+                return mixAlpha(tex2D(_MainTex, uv), i.color, alpha);
             }
             
             ENDCG
